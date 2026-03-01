@@ -5,6 +5,12 @@
 const TROY_OZ_TO_GRAMS = 31.1035;
 const CHANGE_DEAD_ZONE = 0.005; // % — avoid showing ±0.00% from float rounding
 
+const GOLD_KARATS = [
+  { k: 24, purity: 24 / 24 },
+  { k: 21, purity: 21 / 24 },
+  { k: 18, purity: 18 / 24 },
+];
+
 const API = {
   geo:   'https://ipapi.co/json/',
   gold:  'https://api.gold-api.com/price/XAU',
@@ -404,8 +410,12 @@ async function init() {
   document.getElementById('updated').textContent =
     `Updated: ${new Date().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}`;
 
-  document.getElementById('gold-oz').textContent   = formatter.format(goldOz)   + ' /troy oz';
-  document.getElementById('gold-gram').textContent = formatter.format(goldGram) + ' /gram';
+  GOLD_KARATS.forEach(({ k, purity }) => {
+    const kOz   = goldOz * purity;
+    const kGram = kOz / TROY_OZ_TO_GRAMS;
+    document.getElementById(`gold-${k}k-oz`).textContent   = formatter.format(kOz);
+    document.getElementById(`gold-${k}k-gram`).textContent = formatter.format(kGram);
+  });
   renderBadge(document.getElementById('gold-badge'), goldChange);
 
   document.getElementById('silver-oz').textContent   = formatter.format(silverOz)   + ' /troy oz';

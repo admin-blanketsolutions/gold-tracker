@@ -37,10 +37,34 @@
         <div class="card-header">
           <span class="metal-symbol" aria-hidden="true">Au</span>
           <h2>Gold</h2>
+          <span class="badge" id="gold-badge">—</span>
         </div>
-        <p class="price-oz" id="gold-oz">—</p>
-        <p class="price-gram" id="gold-gram">—</p>
-        <span class="badge" id="gold-badge">—</span>
+        <table class="karat-table" aria-label="Gold prices by karat">
+          <thead>
+            <tr>
+              <th></th>
+              <th>/troy oz</th>
+              <th>/gram</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="karat-row karat-24">
+              <td class="karat-label">24K</td>
+              <td id="gold-24k-oz">—</td>
+              <td id="gold-24k-gram">—</td>
+            </tr>
+            <tr class="karat-row karat-21">
+              <td class="karat-label">21K</td>
+              <td id="gold-21k-oz">—</td>
+              <td id="gold-21k-gram">—</td>
+            </tr>
+            <tr class="karat-row karat-18">
+              <td class="karat-label">18K</td>
+              <td id="gold-18k-oz">—</td>
+              <td id="gold-18k-gram">—</td>
+            </tr>
+          </tbody>
+        </table>
       </article>
 
       <article class="card" id="card-silver">

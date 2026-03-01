@@ -164,6 +164,52 @@ h1 {
   color: var(--text-muted);
 }
 
+/* ── Karat table (gold card) ── */
+.karat-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+  font-size: 0.88rem;
+}
+
+.karat-table thead th {
+  text-align: right;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding-bottom: 0.4rem;
+  letter-spacing: 0.03em;
+}
+
+.karat-table thead th:first-child { text-align: left; }
+
+.karat-table td {
+  padding: 0.35rem 0;
+  text-align: right;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.karat-table td:last-child { color: var(--flat); font-size: 0.82rem; }
+
+.karat-label {
+  text-align: left !important;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  width: 2.5rem;
+}
+
+/* Highlight 24K as the primary/spot row */
+.karat-24 td { color: var(--text) !important; font-size: 0.95rem; }
+.karat-24 td:last-child { color: var(--text-muted) !important; font-size: 0.85rem; }
+.karat-24 .karat-label { color: var(--gold); }
+
+/* Badge in card header */
+#card-gold .card-header { justify-content: flex-start; }
+#card-gold .card-header .badge { margin-left: auto; margin-top: 0; }
+
 /* ── Badge ── */
 .badge {
   display: inline-block;
