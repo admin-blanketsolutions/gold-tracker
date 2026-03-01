@@ -71,10 +71,29 @@
         <div class="card-header">
           <span class="metal-symbol" aria-hidden="true">Ag</span>
           <h2>Silver</h2>
+          <span class="badge" id="silver-badge">—</span>
         </div>
-        <p class="price-oz" id="silver-oz">—</p>
-        <p class="price-gram" id="silver-gram">—</p>
-        <span class="badge" id="silver-badge">—</span>
+        <table class="karat-table" aria-label="Silver prices by purity">
+          <thead>
+            <tr>
+              <th></th>
+              <th>/troy oz</th>
+              <th>/gram</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="karat-row purity-999">
+              <td class="karat-label">999</td>
+              <td id="silver-999-oz">—</td>
+              <td id="silver-999-gram">—</td>
+            </tr>
+            <tr class="karat-row purity-925">
+              <td class="karat-label">925</td>
+              <td id="silver-925-oz">—</td>
+              <td id="silver-925-gram">—</td>
+            </tr>
+          </tbody>
+        </table>
       </article>
 
     </section>

@@ -11,6 +11,11 @@ const GOLD_KARATS = [
   { k: 18, purity: 18 / 24 },
 ];
 
+const SILVER_PURITIES = [
+  { k: 999, purity: 0.999 },
+  { k: 925, purity: 0.925 },
+];
+
 const API = {
   geo:   'https://ipapi.co/json/',
   gold:  'https://api.gold-api.com/price/XAU',
@@ -418,8 +423,12 @@ async function init() {
   });
   renderBadge(document.getElementById('gold-badge'), goldChange);
 
-  document.getElementById('silver-oz').textContent   = formatter.format(silverOz)   + ' /troy oz';
-  document.getElementById('silver-gram').textContent = formatter.format(silverGram) + ' /gram';
+  SILVER_PURITIES.forEach(({ k, purity }) => {
+    const kOz   = silverOz * purity;
+    const kGram = kOz / TROY_OZ_TO_GRAMS;
+    document.getElementById(`silver-${k}-oz`).textContent   = formatter.format(kOz);
+    document.getElementById(`silver-${k}-gram`).textContent = formatter.format(kGram);
+  });
   renderBadge(document.getElementById('silver-badge'), silverChange);
 
   // 8. Chart

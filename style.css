@@ -207,8 +207,15 @@ h1 {
 .karat-24 .karat-label { color: var(--gold); }
 
 /* Badge in card header */
-#card-gold .card-header { justify-content: flex-start; }
-#card-gold .card-header .badge { margin-left: auto; margin-top: 0; }
+#card-gold .card-header,
+#card-silver .card-header { justify-content: flex-start; }
+#card-gold .card-header .badge,
+#card-silver .card-header .badge { margin-left: auto; margin-top: 0; }
+
+/* Highlight 999 as the primary/spot row for silver */
+.purity-999 td { color: var(--text) !important; font-size: 0.95rem; }
+.purity-999 td:last-child { color: var(--text-muted) !important; font-size: 0.85rem; }
+.purity-999 .karat-label { color: var(--silver); }
 
 /* ── Badge ── */
 .badge {
