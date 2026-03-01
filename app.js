@@ -19,11 +19,12 @@ const TTL = {
 };
 
 const CACHE_KEY = {
-  geo:     'pmt_geo',
-  gold:    'pmt_prices_gold',
-  silver:  'pmt_prices_silver',
-  fx:      (code) => `pmt_fx_${code}`,
-  history: 'pmt_history',
+  geo:       'pmt_geo',
+  gold:      'pmt_prices_gold',
+  silver:    'pmt_prices_silver',
+  fx:        (code) => `pmt_fx_${code}`,
+  history:   'pmt_history',
+  portfolio: 'pmt_portfolio',
 };
 
 // Frankfurter-supported currency codes (subset covering common currencies)
@@ -141,6 +142,72 @@ function renderBadge(el, pct) {
     el.textContent = `${pct.toFixed(2)}%`;
     el.className = 'badge down';
   }
+}
+
+// ── Portfolio ─────────────────────────────────────────────────────────────────
+
+function portfolioLoad() {
+  return cacheGet(CACHE_KEY.portfolio) ?? { goldOz: '', silverOz: '' };
+}
+
+function portfolioSave(goldOz, silverOz) {
+  cacheSet(CACHE_KEY.portfolio, { goldOz, silverOz }, null);
+}
+
+function renderPortfolio() {
+  const formatter     = window._formatter;
+  const goldPriceOz   = window._goldPriceOz   ?? 0;
+  const silverPriceOz = window._silverPriceOz ?? 0;
+  if (!formatter) return;
+
+  const goldOz   = parseFloat(document.getElementById('gold-oz-input').value)   || 0;
+  const silverOz = parseFloat(document.getElementById('silver-oz-input').value) || 0;
+
+  portfolioSave(
+    document.getElementById('gold-oz-input').value,
+    document.getElementById('silver-oz-input').value,
+  );
+
+  const goldValue   = goldOz   * goldPriceOz;
+  const silverValue = silverOz * silverPriceOz;
+  const total       = goldValue + silverValue;
+
+  document.getElementById('portfolio-gold-value').textContent   = formatter.format(goldValue);
+  document.getElementById('portfolio-silver-value').textContent = formatter.format(silverValue);
+  document.getElementById('portfolio-total').textContent        = formatter.format(total);
+}
+
+function initPortfolioInputs() {
+  const goldOzEl    = document.getElementById('gold-oz-input');
+  const goldGramEl  = document.getElementById('gold-gram-input');
+  const silverOzEl  = document.getElementById('silver-oz-input');
+  const silverGramEl= document.getElementById('silver-gram-input');
+
+  // Restore saved values
+  const saved = portfolioLoad();
+  if (saved.goldOz)   { goldOzEl.value   = saved.goldOz;   goldGramEl.value   = (parseFloat(saved.goldOz)   * TROY_OZ_TO_GRAMS).toFixed(3); }
+  if (saved.silverOz) { silverOzEl.value = saved.silverOz; silverGramEl.value = (parseFloat(saved.silverOz) * TROY_OZ_TO_GRAMS).toFixed(3); }
+
+  goldOzEl.addEventListener('input', () => {
+    const oz = parseFloat(goldOzEl.value);
+    goldGramEl.value = isNaN(oz) ? '' : (oz * TROY_OZ_TO_GRAMS).toFixed(3);
+    renderPortfolio();
+  });
+  goldGramEl.addEventListener('input', () => {
+    const g = parseFloat(goldGramEl.value);
+    goldOzEl.value = isNaN(g) ? '' : (g / TROY_OZ_TO_GRAMS).toFixed(6);
+    renderPortfolio();
+  });
+  silverOzEl.addEventListener('input', () => {
+    const oz = parseFloat(silverOzEl.value);
+    silverGramEl.value = isNaN(oz) ? '' : (oz * TROY_OZ_TO_GRAMS).toFixed(3);
+    renderPortfolio();
+  });
+  silverGramEl.addEventListener('input', () => {
+    const g = parseFloat(silverGramEl.value);
+    silverOzEl.value = isNaN(g) ? '' : (g / TROY_OZ_TO_GRAMS).toFixed(6);
+    renderPortfolio();
+  });
 }
 
 // ── UI helpers ───────────────────────────────────────────────────────────────
@@ -317,6 +384,10 @@ async function init() {
   window._formatter = makeFormatter(currencyCode);
   const formatter   = window._formatter;
 
+  // Store local prices per oz for portfolio calculations
+  window._goldPriceOz   = goldUsd * fxRate;
+  window._silverPriceOz = silverUsd * fxRate;
+
   // 4. Update history cache
   const history = historyAddToday(goldUsd, silverUsd);
 
@@ -362,6 +433,8 @@ async function init() {
 
   showState('main');
   initChart(history, formatter, currencyCode);
+  initPortfolioInputs();
+  renderPortfolio();
 }
 
 // ── Event listeners ──────────────────────────────────────────────────────────
