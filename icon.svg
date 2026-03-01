@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="96" fill="#0f1117"/>
+  <!-- Gold coin glow -->
+  <circle cx="256" cy="210" r="148" fill="#f5c842" opacity="0.08"/>
+  <!-- Gold coin ring -->
+  <circle cx="256" cy="210" r="132" fill="none" stroke="#f5c842" stroke-width="14"/>
+  <!-- Au symbol -->
+  <text x="256" y="256" text-anchor="middle" dominant-baseline="middle"
+        font-family="system-ui, -apple-system, sans-serif"
+        font-size="108" font-weight="700" fill="#f5c842">Au</text>
+  <!-- Silver label -->
+  <text x="256" y="398" text-anchor="middle" dominant-baseline="middle"
+        font-family="system-ui, -apple-system, sans-serif"
+        font-size="48" font-weight="500" letter-spacing="6" fill="#a8b5c8">Ag</text>
+</svg>

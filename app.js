@@ -448,6 +448,10 @@ async function init() {
 // ── Event listeners ──────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => { /* non-fatal */ });
+  }
+
   init();
 
   document.getElementById('btn-retry').addEventListener('click', init);

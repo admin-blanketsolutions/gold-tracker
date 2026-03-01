@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Full bleed background (maskable icons must fill the entire canvas) -->
+  <rect width="512" height="512" fill="#0f1117"/>
+  <!-- Safe zone starts at ~56px from each edge (80% of 512) -->
+  <!-- Gold coin glow -->
+  <circle cx="256" cy="232" r="120" fill="#f5c842" opacity="0.08"/>
+  <!-- Gold coin ring -->
+  <circle cx="256" cy="232" r="106" fill="none" stroke="#f5c842" stroke-width="12"/>
+  <!-- Au symbol -->
+  <text x="256" y="276" text-anchor="middle" dominant-baseline="middle"
+        font-family="system-ui, -apple-system, sans-serif"
+        font-size="86" font-weight="700" fill="#f5c842">Au</text>
+  <!-- Silver label -->
+  <text x="256" y="380" text-anchor="middle" dominant-baseline="middle"
+        font-family="system-ui, -apple-system, sans-serif"
+        font-size="40" font-weight="500" letter-spacing="5" fill="#a8b5c8">Ag</text>
+</svg>
