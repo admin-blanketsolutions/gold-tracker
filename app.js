@@ -9,7 +9,8 @@ const API = {
   geo:   'https://ipapi.co/json/',
   gold:  'https://api.gold-api.com/price/XAU',
   silver:'https://api.gold-api.com/price/XAG',
-  fx:    (code) => `https://api.frankfurter.app/latest?from=USD&to=${code}`,
+  // 170+ currencies, free, no key, updated daily, hosted on jsDelivr CDN
+  fx:    () => 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json',
 };
 
 const TTL = {
@@ -22,20 +23,12 @@ const CACHE_KEY = {
   geo:       'pmt_geo',
   gold:      'pmt_prices_gold',
   silver:    'pmt_prices_silver',
-  fx:        (code) => `pmt_fx_${code}`,
+  fx:        'pmt_fx2',          // pmt_fx2 avoids stale Frankfurter-format cache
   history:   'pmt_history',
   portfolio: 'pmt_portfolio',
 };
 
-// Frankfurter-supported currency codes (subset covering common currencies)
-const SUPPORTED_CURRENCIES = new Set([
-  'AUD','BGN','BRL','CAD','CHF','CNY','CZK','DKK','EUR','GBP',
-  'HKD','HUF','IDR','ILS','INR','ISK','JPY','KRW','MXN','MYR',
-  'NOK','NZD','PHP','PLN','RON','SEK','SGD','THB','TRY','USD','ZAR',
-]);
-
-// Zero-decimal currencies for Intl.NumberFormat
-const ZERO_DECIMAL = new Set(['JPY','KRW','IDR','ISK']);
+// No currency exclusion list needed: the fawazahmed0 API covers 170+ currencies
 
 // ── localStorage cache helpers ───────────────────────────────────────────────
 
@@ -113,12 +106,10 @@ function historyAddToday(goldUsd, silverUsd) {
 // ── Price formatting ─────────────────────────────────────────────────────────
 
 function makeFormatter(currencyCode) {
-  const fractionDigits = ZERO_DECIMAL.has(currencyCode) ? 0 : 2;
+  // Let Intl decide decimal places per currency (JPY=0, USD=2, JOD=3, etc.)
   return new Intl.NumberFormat(undefined, {
-    style:                 'currency',
-    currency:              currencyCode,
-    minimumFractionDigits: fractionDigits,
-    maximumFractionDigits: fractionDigits,
+    style:    'currency',
+    currency: currencyCode,
   });
 }
 
@@ -341,11 +332,7 @@ async function init() {
     const geo = await fetchWithCache(API.geo, CACHE_KEY.geo, TTL.geo);
     const detected = (geo.currency ?? '').toUpperCase();
     countryName = geo.country_name ?? '';
-    if (SUPPORTED_CURRENCIES.has(detected)) {
-      currencyCode = detected;
-    } else if (detected) {
-      fallbackNote = ` (${detected} not supported — showing USD)`;
-    }
+    if (detected) currencyCode = detected;
   } catch {
     // Silently fall back to USD
   }
@@ -354,23 +341,25 @@ async function init() {
   let goldUsd, silverUsd, fxRate;
   try {
     const [goldData, silverData, fxData] = await Promise.all([
-      fetchWithCache(API.gold,   CACHE_KEY.gold,       TTL.prices),
-      fetchWithCache(API.silver, CACHE_KEY.silver,     TTL.prices),
+      fetchWithCache(API.gold,   CACHE_KEY.gold,   TTL.prices),
+      fetchWithCache(API.silver, CACHE_KEY.silver, TTL.prices),
       currencyCode === 'USD'
         ? Promise.resolve(null)
-        : fetchWithCache(API.fx(currencyCode), CACHE_KEY.fx(currencyCode), TTL.fx),
+        : fetchWithCache(API.fx(), CACHE_KEY.fx, TTL.fx),
     ]);
 
     // gold-api.com returns { price, ... }
     goldUsd   = goldData.price;
     silverUsd = silverData.price;
 
-    if (fxData && fxData.rates && fxData.rates[currencyCode]) {
-      fxRate = fxData.rates[currencyCode];
+    // fawazahmed0 API returns { date, usd: { jod: 0.709, eur: 0.92, ... } }
+    const rate = fxData?.usd?.[currencyCode.toLowerCase()];
+    if (rate) {
+      fxRate = rate;
     } else {
       fxRate = 1;
       if (currencyCode !== 'USD') {
-        fallbackNote = ` (FX unavailable — showing USD)`;
+        fallbackNote = ` (${currencyCode} not supported — showing USD)`;
         currencyCode = 'USD';
       }
     }
